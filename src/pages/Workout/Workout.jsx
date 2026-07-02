@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 const workoutDays = [
   {
@@ -82,6 +83,20 @@ function Workout() {
           replacing biceps or triceps.
         </p>
       </div>
+
+      <Link
+        className="mt-6 flex rounded-3xl bg-white p-5 text-[#12351f] shadow-xl shadow-black/20 transition hover:-translate-y-0.5 hover:bg-[#f7fff2] sm:p-6"
+        to="/workout/exercises"
+      >
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-[#75ff38]">
+            Exercise Database Prototype
+          </p>
+          <p className="mt-2 text-xl font-black">
+            Open Exercise Rankings →
+          </p>
+        </div>
+      </Link>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_0.95fr] lg:items-start">
         <div className="grid gap-4 sm:grid-cols-2">
