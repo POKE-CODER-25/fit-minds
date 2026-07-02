@@ -17,6 +17,10 @@ function Landing() {
             A mobile-first fitness and health prototype foundation for movement,
             workouts, diet guidance, and health AI experiences.
           </p>
+          <p className="mt-3 max-w-xl text-sm font-bold leading-6 text-[#ffdd33]">
+            Built for visual fitness guidance, step tracking, workout planning,
+            and nutrition direction.
+          </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
               className="rounded-2xl bg-[#75ff38] px-6 py-3 text-center font-black text-black shadow-lg shadow-[#75ff38]/20"

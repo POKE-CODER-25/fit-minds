@@ -13,8 +13,26 @@ function Login() {
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
+  const [resetLoading, setResetLoading] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  }
+
+  function getPasswordResetErrorMessage(caughtError) {
+    const resetMessages = {
+      'auth/invalid-email': 'Please enter a valid email address.',
+      'auth/too-many-requests': 'Too many attempts. Please try again later.',
+      'auth/user-not-found': 'No account found with this email.',
+    }
+
+    return (
+      resetMessages[caughtError?.code] ||
+      'We could not send a password reset email. Please try again.'
+    )
+  }
 
   function handleChange(event) {
     setForm((current) => ({
@@ -47,20 +65,29 @@ function Login() {
   async function handleResetPassword() {
     setError('')
     setMessage('')
+    const email = form.email.trim()
 
-    if (!form.email) {
+    if (!email) {
       setError('Enter your email address before requesting a reset link.')
       return
     }
 
-    setLoading(true)
+    if (!isValidEmail(email)) {
+      setError('Please enter a valid email address.')
+      return
+    }
+
+    setResetLoading(true)
     try {
-      await sendResetEmail(form.email)
-      setMessage('Password reset email sent. Check your inbox.')
+      await sendResetEmail(email)
+      setMessage(
+        'Password reset email sent. Please check your inbox or spam folder.',
+      )
     } catch (caughtError) {
-      setError(getAuthErrorMessage(caughtError))
+      console.error('Password reset email failed:', caughtError)
+      setError(getPasswordResetErrorMessage(caughtError))
     } finally {
-      setLoading(false)
+      setResetLoading(false)
     }
   }
 
@@ -103,7 +130,7 @@ function Login() {
 
           <button
             className="w-full rounded-2xl bg-[#75ff38] px-6 py-3 font-black text-black shadow-lg shadow-[#75ff38]/20 disabled:cursor-not-allowed disabled:opacity-60"
-            disabled={loading}
+            disabled={loading || resetLoading}
             type="submit"
           >
             {loading ? 'Please wait...' : 'Login'}
@@ -113,11 +140,11 @@ function Login() {
         <div className="mt-5 flex flex-col gap-3 text-center text-sm font-bold text-[#12351f] sm:flex-row sm:items-center sm:justify-between">
           <button
             className="text-left underline decoration-[#75ff38] decoration-2 underline-offset-4 disabled:opacity-60 sm:text-center"
-            disabled={loading}
+            disabled={loading || resetLoading}
             onClick={handleResetPassword}
             type="button"
           >
-            Forgot Password?
+            {resetLoading ? 'Sending reset email...' : 'Forgot Password?'}
           </button>
           <Link
             className="underline decoration-[#75ff38] decoration-2 underline-offset-4"
