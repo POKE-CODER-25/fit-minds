@@ -6,7 +6,6 @@ import {
   loginWithEmail,
   sendResetEmail,
 } from '../../services/authService.js'
-import { getFitnessProfile } from '../../services/firestoreService.js'
 
 function Login() {
   const [form, setForm] = useState({ email: '', password: '' })
@@ -48,11 +47,8 @@ function Login() {
     setLoading(true)
 
     try {
-      const credential = await loginWithEmail(form.email, form.password)
-      const existingProfile = await getFitnessProfile(credential.user.uid)
-      const destination =
-        location.state?.from?.pathname ||
-        (existingProfile ? '/home' : '/profile')
+      await loginWithEmail(form.email, form.password)
+      const destination = location.state?.from?.pathname || '/home'
 
       navigate(destination, { replace: true })
     } catch (caughtError) {

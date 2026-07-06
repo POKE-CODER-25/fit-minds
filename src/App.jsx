@@ -26,7 +26,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/profile" element={<Profile />} />
         </Route>
-        <Route element={<ProtectedRoute requireProfile />}>
+        <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<Home />} />
           <Route path="/pedometer" element={<Pedometer />} />
           <Route path="/workout" element={<Workout />} />

@@ -21,6 +21,12 @@ function AuthProvider({ children }) {
       const latestProfile = await getFitnessProfile(uid)
       setProfile(latestProfile)
       return latestProfile
+    } catch (error) {
+      console.error('PROFILE LOAD FAILED:', error)
+      console.error('code:', error?.code)
+      console.error('message:', error?.message)
+      setProfile(null)
+      return null
     } finally {
       setProfileLoading(false)
     }
@@ -36,11 +42,15 @@ function AuthProvider({ children }) {
         return
       }
 
+      setLoading(false)
       try {
         const existingProfile = await getFitnessProfile(user.uid)
         setProfile(existingProfile)
-      } finally {
-        setLoading(false)
+      } catch (error) {
+        console.error('PROFILE LOAD FAILED:', error)
+        console.error('code:', error?.code)
+        console.error('message:', error?.message)
+        setProfile(null)
       }
     })
 

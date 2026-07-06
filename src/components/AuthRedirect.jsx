@@ -3,9 +3,9 @@ import { useAuth } from '../hooks/useAuth.js'
 import LoadingSpinner from './LoadingSpinner.jsx'
 
 function AuthRedirect() {
-  const { currentUser, loading, profile, profileLoading } = useAuth()
+  const { currentUser, loading } = useAuth()
 
-  if (loading || profileLoading) {
+  if (loading) {
     return <LoadingSpinner />
   }
 
@@ -13,7 +13,7 @@ function AuthRedirect() {
     return <Outlet />
   }
 
-  return <Navigate replace to={profile ? '/home' : '/profile'} />
+  return <Navigate replace to="/home" />
 }
 
 export default AuthRedirect

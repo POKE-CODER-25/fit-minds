@@ -5,7 +5,6 @@ import {
   getAuthErrorMessage,
   signupWithEmail,
 } from '../../services/authService.js'
-import { getFitnessProfile } from '../../services/firestoreService.js'
 
 function Signup() {
   const [form, setForm] = useState({ email: '', password: '' })
@@ -26,9 +25,8 @@ function Signup() {
     setLoading(true)
 
     try {
-      const credential = await signupWithEmail(form.email, form.password)
-      const existingProfile = await getFitnessProfile(credential.user.uid)
-      navigate(existingProfile ? '/home' : '/profile', { replace: true })
+      await signupWithEmail(form.email, form.password)
+      navigate('/home', { replace: true })
     } catch (caughtError) {
       setError(getAuthErrorMessage(caughtError))
     } finally {
