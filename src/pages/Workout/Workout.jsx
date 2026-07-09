@@ -8,6 +8,7 @@ const workoutDays = [
     purpose: 'Push strength with chest as the main driver.',
     primary: ['Chest'],
     secondary: ['Triceps', 'Front Shoulders'],
+    exerciseMuscles: ['Chest', 'Triceps'],
   },
   {
     day: 2,
@@ -15,6 +16,7 @@ const workoutDays = [
     purpose: 'Pull strength with upper back and arm support.',
     primary: ['Back'],
     secondary: ['Biceps', 'Rear Shoulders'],
+    exerciseMuscles: ['Back', 'Biceps'],
   },
   {
     day: 3,
@@ -22,6 +24,7 @@ const workoutDays = [
     purpose: 'Lower-body strength with shoulder development.',
     primary: ['Legs'],
     secondary: ['Shoulders', 'Core Stability'],
+    exerciseMuscles: ['Legs', 'Shoulders'],
   },
   {
     day: 4,
@@ -29,6 +32,7 @@ const workoutDays = [
     purpose: 'Second weekly push session for repeat practice.',
     primary: ['Chest'],
     secondary: ['Triceps', 'Front Shoulders'],
+    exerciseMuscles: ['Chest', 'Triceps'],
   },
   {
     day: 5,
@@ -36,6 +40,7 @@ const workoutDays = [
     purpose: 'Second weekly pull session for back volume.',
     primary: ['Back'],
     secondary: ['Biceps', 'Rear Shoulders'],
+    exerciseMuscles: ['Back', 'Biceps'],
   },
   {
     day: 6,
@@ -43,6 +48,7 @@ const workoutDays = [
     purpose: 'Second lower-body and shoulder focus day.',
     primary: ['Legs'],
     secondary: ['Shoulders', 'Core Stability'],
+    exerciseMuscles: ['Legs', 'Shoulders'],
   },
   {
     day: 7,
@@ -186,15 +192,22 @@ function Workout() {
                 </p>
               </div>
               <p className="text-sm font-semibold leading-6 text-black/60">
-                Exercise ranking page will be added in Phase 3D
+                Open rankings for this day&apos;s training muscles.
               </p>
               <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl bg-[#12351f] p-4 text-white">
-                  <p className="text-sm font-black">Primary muscle focus</p>
-                </div>
-                <div className="rounded-2xl border border-[#12351f]/10 bg-white p-4 text-[#12351f] shadow-sm">
-                  <p className="text-sm font-black">Secondary muscle focus</p>
-                </div>
+                {selectedDay.exerciseMuscles.map((muscle) => (
+                  <Link
+                    className="rounded-2xl bg-[#12351f] p-4 text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#1c4b2d]"
+                    key={muscle}
+                    to={`/workout/exercises?muscle=${encodeURIComponent(
+                      muscle,
+                    )}`}
+                  >
+                    <p className="text-sm font-black">
+                      View {muscle} Exercises
+                    </p>
+                  </Link>
+                ))}
               </div>
             </div>
           )}
