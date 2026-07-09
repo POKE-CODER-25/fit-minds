@@ -11,7 +11,6 @@ const dietTypeStyles = {
   Vegetarian: 'bg-[#f7fff2] text-[#12351f]',
   Eggitarian: 'bg-[#fff9d8] text-[#12351f]',
   'Non Vegetarian': 'bg-[#12351f] text-white',
-  Vegan: 'bg-[#75ff38] text-black',
 }
 
 function Diet() {
