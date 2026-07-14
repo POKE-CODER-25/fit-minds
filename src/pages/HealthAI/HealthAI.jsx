@@ -1,4 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { categorySuggestions } from '../../data/healthKnowledge.js'
+import { getHealthResponse } from '../../utils/healthResponseEngine.js'
 
 const coachCards = [
   {
@@ -70,6 +73,17 @@ function HealthAI() {
   const [bmiError, setBmiError] = useState('')
   const [message, setMessage] = useState('')
   const [chatMessages, setChatMessages] = useState([])
+  const [isTyping, setIsTyping] = useState(false)
+  const messageAreaRef = useRef(null)
+  const responseTimerRef = useRef(null)
+  const messageIdRef = useRef(0)
+
+  const suggestedQuestions = categorySuggestions[selectedCoach]
+
+  function nextMessageId(role) {
+    messageIdRef.current += 1
+    return `${role}-${messageIdRef.current}`
+  }
 
   function calculateBmi(event) {
     event.preventDefault()
@@ -89,23 +103,47 @@ function HealthAI() {
     setBmiResult({ value: bmi.toFixed(1), category })
   }
 
-  function submitMessage(event) {
-    event.preventDefault()
-    const trimmedMessage = message.trim()
+  function askQuestion(question) {
+    const trimmedMessage = question.trim()
 
-    if (!trimmedMessage) return
+    if (!trimmedMessage || isTyping) return
+
+    const programmedResponse = getHealthResponse(trimmedMessage)
 
     setChatMessages((current) => [
       ...current,
-      { id: `${Date.now()}-user`, role: 'user', text: trimmedMessage },
-      {
-        id: `${Date.now()}-coach`,
-        role: 'coach',
-        text: 'Health Coach AI will be activated in the next phase.',
-      },
+      { id: nextMessageId('user'), role: 'user', text: trimmedMessage },
     ])
     setMessage('')
+    setIsTyping(true)
+
+    responseTimerRef.current = window.setTimeout(() => {
+      setChatMessages((current) => [
+        ...current,
+        {
+          id: nextMessageId('coach'),
+          role: 'coach',
+          response: programmedResponse,
+        },
+      ])
+      setIsTyping(false)
+    }, 650)
   }
+
+  function submitMessage(event) {
+    event.preventDefault()
+    askQuestion(message)
+  }
+
+  useEffect(() => {
+    const messageArea = messageAreaRef.current
+
+    if (messageArea) {
+      messageArea.scrollTo({ top: messageArea.scrollHeight, behavior: 'smooth' })
+    }
+  }, [chatMessages, isTyping])
+
+  useEffect(() => () => window.clearTimeout(responseTimerRef.current), [])
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
@@ -170,6 +208,25 @@ function HealthAI() {
             </button>
           )
         })}
+      </div>
+
+      <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+        <p className="text-xs font-black uppercase tracking-[0.16em] text-[#ffdd33]">
+          Try asking about {selectedCoach}
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {suggestedQuestions.map((question) => (
+            <button
+              className="rounded-full border border-white/15 bg-white/10 px-3 py-2 text-left text-xs font-bold text-white/80 transition hover:border-[#75ff38] hover:bg-[#75ff38] hover:text-black active:scale-95 disabled:cursor-wait disabled:opacity-50"
+              disabled={isTyping}
+              key={question}
+              onClick={() => askQuestion(question)}
+              type="button"
+            >
+              {question}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="mt-6 grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
@@ -253,7 +310,11 @@ function HealthAI() {
             </div>
           </div>
 
-          <div aria-live="polite" className="flex flex-1 flex-col gap-3 overflow-y-auto py-5">
+          <div
+            aria-live="polite"
+            className="flex max-h-[34rem] flex-1 flex-col gap-3 overflow-y-auto py-5 pr-1"
+            ref={messageAreaRef}
+          >
             {chatMessages.length === 0 ? (
               <div className="m-auto max-w-sm text-center">
                 <p className="text-base font-black text-white">Your conversation starts here.</p>
@@ -262,18 +323,68 @@ function HealthAI() {
                 </p>
               </div>
             ) : (
-              chatMessages.map((chatMessage) => (
-                <div
-                  className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm font-semibold leading-6 ${
-                    chatMessage.role === 'user'
-                      ? 'ml-auto rounded-br-md bg-[#75ff38] text-black'
-                      : 'rounded-bl-md bg-white text-[#12351f]'
-                  }`}
-                  key={chatMessage.id}
-                >
-                  {chatMessage.text}
-                </div>
-              ))
+              chatMessages.map((chatMessage) => {
+                const response = chatMessage.response
+
+                return (
+                  <div
+                    className={`max-w-[90%] rounded-2xl px-4 py-3 text-sm font-semibold leading-6 ${
+                      chatMessage.role === 'user'
+                        ? 'ml-auto rounded-br-md bg-[#75ff38] text-black'
+                        : response?.type === 'urgent'
+                          ? 'rounded-bl-md border border-red-300 bg-red-50 text-red-950'
+                          : 'rounded-bl-md bg-white text-[#12351f]'
+                    }`}
+                    key={chatMessage.id}
+                  >
+                    {chatMessage.role === 'user' ? (
+                      chatMessage.text
+                    ) : (
+                      <div>
+                        <p>{response.main}</p>
+                        {response.steps.length > 0 && (
+                          <div className="mt-3 border-t border-black/10 pt-3">
+                            <p className="font-black">Coach&apos;s Next Step</p>
+                            <ul className="mt-1 space-y-1">
+                              {response.steps.map((step) => <li key={step}>✓ {step}</li>)}
+                            </ul>
+                          </div>
+                        )}
+                        {response.examples?.length > 0 && (
+                          <div className="mt-3 border-t border-black/10 pt-3">
+                            <p className="font-black">Try asking:</p>
+                            <ul className="mt-1 space-y-1 text-[#12351f]/75">
+                              {response.examples.map((example) => <li key={example}>• {example}</li>)}
+                            </ul>
+                          </div>
+                        )}
+                        {response.links.length > 0 && (
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {response.links.map((link) => (
+                              <Link
+                                className="rounded-full bg-[#12351f] px-3 py-1.5 text-xs font-black text-white transition hover:bg-[#194a2c]"
+                                key={link}
+                                to={link}
+                              >
+                                Open {link === '/workout/exercises' ? 'Exercise Rankings' : link.slice(1).replace('-', ' ')}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )
+              })
+            )}
+            {isTyping && (
+              <div className="w-fit rounded-2xl rounded-bl-md bg-white px-4 py-3 text-[#12351f]">
+                <span className="inline-flex items-center gap-1" aria-label="Health Coach AI is typing">
+                  {[0, 1, 2].map((dot) => (
+                    <span className="h-2 w-2 animate-pulse rounded-full bg-[#12351f]/55" key={dot} />
+                  ))}
+                </span>
+              </div>
             )}
           </div>
 
@@ -282,13 +393,15 @@ function HealthAI() {
             <input
               className="min-h-12 min-w-0 flex-1 rounded-xl border border-white/15 bg-black/35 px-4 text-sm font-semibold text-white outline-none placeholder:text-white/40 focus:border-[#75ff38] focus:ring-2 focus:ring-[#75ff38]/30"
               id="coach-message"
+              disabled={isTyping}
               onChange={(event) => setMessage(event.target.value)}
               placeholder="Ask your coach..."
               type="text"
               value={message}
             />
             <button
-              className="min-h-12 rounded-xl bg-[#ffdd33] px-5 text-sm font-black text-black transition hover:bg-[#ffe866] active:scale-95"
+              className="min-h-12 rounded-xl bg-[#ffdd33] px-5 text-sm font-black text-black transition hover:bg-[#ffe866] active:scale-95 disabled:cursor-wait disabled:opacity-60"
+              disabled={isTyping || !message.trim()}
               type="submit"
             >
               Send
