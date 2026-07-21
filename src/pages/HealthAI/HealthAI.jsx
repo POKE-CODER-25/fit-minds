@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { categorySuggestions } from '../../data/healthKnowledge.js'
-import { getHealthResponse } from '../../utils/healthResponseEngine.js'
+import { getGeminiFallback, routeHealthQuestion } from '../../utils/hybridHealthResponse.js'
 
 const coachCards = [
   {
@@ -73,10 +73,12 @@ function HealthAI() {
   const [bmiError, setBmiError] = useState('')
   const [message, setMessage] = useState('')
   const [chatMessages, setChatMessages] = useState([])
-  const [isTyping, setIsTyping] = useState(false)
+  const [isAIThinking, setIsAIThinking] = useState(false)
   const messageAreaRef = useRef(null)
-  const responseTimerRef = useRef(null)
+  const messagesEndRef = useRef(null)
+  const shouldAutoScrollRef = useRef(true)
   const messageIdRef = useRef(0)
+  const lastSentAtRef = useRef(0)
 
   const suggestedQuestions = categorySuggestions[selectedCoach]
 
@@ -103,31 +105,75 @@ function HealthAI() {
     setBmiResult({ value: bmi.toFixed(1), category })
   }
 
-  function askQuestion(question) {
+  async function askQuestion(question) {
     const trimmedMessage = question.trim()
 
-    if (!trimmedMessage || isTyping) return
+    if (!trimmedMessage || isAIThinking) return
 
-    const programmedResponse = getHealthResponse(trimmedMessage)
+    const now = Date.now()
 
-    setChatMessages((current) => [
-      ...current,
-      { id: nextMessageId('user'), role: 'user', text: trimmedMessage },
-    ])
-    setMessage('')
-    setIsTyping(true)
-
-    responseTimerRef.current = window.setTimeout(() => {
+    if (now - lastSentAtRef.current < 900) {
       setChatMessages((current) => [
         ...current,
         {
           id: nextMessageId('coach'),
           role: 'coach',
-          response: programmedResponse,
+          response: {
+            type: 'cooldown',
+            main: 'Please wait a moment before sending another message.',
+            steps: [],
+            links: [],
+          },
         },
       ])
-      setIsTyping(false)
-    }, 650)
+      return
+    }
+
+    lastSentAtRef.current = now
+    const route = routeHealthQuestion(trimmedMessage)
+    const userMessage = {
+      id: nextMessageId('user'),
+      role: 'user',
+      text: trimmedMessage,
+    }
+
+    if (!route.useGemini) {
+      setChatMessages((current) => [
+        ...current,
+        userMessage,
+        {
+          id: nextMessageId('coach'),
+          role: 'coach',
+          response: route.programmedResponse,
+        },
+      ])
+      setMessage('')
+      return
+    }
+
+    const context = [
+      ...chatMessages.map((chatMessage) => ({
+        role: chatMessage.role,
+        text: chatMessage.text ?? chatMessage.response?.main,
+      })),
+      { role: 'user', text: trimmedMessage },
+    ].slice(-8)
+
+    setChatMessages((current) => [...current, userMessage])
+    setMessage('')
+    setIsAIThinking(true)
+
+    const geminiResponse = await getGeminiFallback(context)
+
+    setChatMessages((current) => [
+      ...current,
+      {
+        id: nextMessageId('coach'),
+        role: 'coach',
+        response: geminiResponse,
+      },
+    ])
+    setIsAIThinking(false)
   }
 
   function submitMessage(event) {
@@ -136,14 +182,19 @@ function HealthAI() {
   }
 
   useEffect(() => {
-    const messageArea = messageAreaRef.current
-
-    if (messageArea) {
-      messageArea.scrollTo({ top: messageArea.scrollHeight, behavior: 'smooth' })
+    if (shouldAutoScrollRef.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
     }
-  }, [chatMessages, isTyping])
+  }, [chatMessages, isAIThinking])
 
-  useEffect(() => () => window.clearTimeout(responseTimerRef.current), [])
+  function trackMessageScroll(event) {
+    const messageArea = event.currentTarget
+    const distanceFromBottom = messageArea.scrollHeight
+      - messageArea.scrollTop
+      - messageArea.clientHeight
+
+    shouldAutoScrollRef.current = distanceFromBottom < 96
+  }
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
@@ -218,7 +269,7 @@ function HealthAI() {
           {suggestedQuestions.map((question) => (
             <button
               className="rounded-full border border-white/15 bg-white/10 px-3 py-2 text-left text-xs font-bold text-white/80 transition hover:border-[#75ff38] hover:bg-[#75ff38] hover:text-black active:scale-95 disabled:cursor-wait disabled:opacity-50"
-              disabled={isTyping}
+              disabled={isAIThinking}
               key={question}
               onClick={() => askQuestion(question)}
               type="button"
@@ -306,13 +357,14 @@ function HealthAI() {
             </span>
             <div>
               <h2 className="text-xl font-black text-white">Ask Coach</h2>
-              <p className="text-xs font-bold text-[#75ff38]">Preview mode</p>
+              <p className="text-xs font-bold text-[#75ff38]">Programmed first · AI fallback</p>
             </div>
           </div>
 
           <div
             aria-live="polite"
-            className="flex max-h-[34rem] flex-1 flex-col gap-3 overflow-y-auto py-5 pr-1"
+            className="flex max-h-[34rem] flex-1 flex-col gap-3 overflow-y-auto pb-10 pt-5 pr-1"
+            onScroll={trackMessageScroll}
             ref={messageAreaRef}
           >
             {chatMessages.length === 0 ? (
@@ -328,7 +380,7 @@ function HealthAI() {
 
                 return (
                   <div
-                    className={`max-w-[90%] rounded-2xl px-4 py-3 text-sm font-semibold leading-6 ${
+                    className={`h-auto max-w-[90%] overflow-visible rounded-2xl px-4 py-3 text-sm font-semibold leading-6 [overflow-wrap:anywhere] ${
                       chatMessage.role === 'user'
                         ? 'ml-auto rounded-br-md bg-[#75ff38] text-black'
                         : response?.type === 'urgent'
@@ -340,8 +392,8 @@ function HealthAI() {
                     {chatMessage.role === 'user' ? (
                       chatMessage.text
                     ) : (
-                      <div>
-                        <p>{response.main}</p>
+                      <div className="h-auto overflow-visible">
+                        <p className="whitespace-pre-wrap [overflow-wrap:anywhere]">{response.main}</p>
                         {response.steps.length > 0 && (
                           <div className="mt-3 border-t border-black/10 pt-3">
                             <p className="font-black">Coach&apos;s Next Step</p>
@@ -377,15 +429,19 @@ function HealthAI() {
                 )
               })
             )}
-            {isTyping && (
-              <div className="w-fit rounded-2xl rounded-bl-md bg-white px-4 py-3 text-[#12351f]">
-                <span className="inline-flex items-center gap-1" aria-label="Health Coach AI is typing">
-                  {[0, 1, 2].map((dot) => (
-                    <span className="h-2 w-2 animate-pulse rounded-full bg-[#12351f]/55" key={dot} />
-                  ))}
+            {isAIThinking && (
+              <div className="h-auto w-fit overflow-visible rounded-2xl rounded-bl-md bg-white px-4 py-3 text-sm font-bold text-[#12351f]">
+                <span className="inline-flex items-center gap-2" aria-label="Health AI is thinking">
+                  <span className="flex gap-1">
+                    {[0, 1, 2].map((dot) => (
+                      <span className="h-2 w-2 animate-pulse rounded-full bg-[#12351f]/55" key={dot} />
+                    ))}
+                  </span>
+                  Health AI is thinking...
                 </span>
               </div>
             )}
+            <div aria-hidden="true" className="h-px shrink-0" ref={messagesEndRef} />
           </div>
 
           <form className="flex gap-2 border-t border-white/10 pt-4" onSubmit={submitMessage}>
@@ -393,7 +449,7 @@ function HealthAI() {
             <input
               className="min-h-12 min-w-0 flex-1 rounded-xl border border-white/15 bg-black/35 px-4 text-sm font-semibold text-white outline-none placeholder:text-white/40 focus:border-[#75ff38] focus:ring-2 focus:ring-[#75ff38]/30"
               id="coach-message"
-              disabled={isTyping}
+              disabled={isAIThinking}
               onChange={(event) => setMessage(event.target.value)}
               placeholder="Ask your coach..."
               type="text"
@@ -401,7 +457,7 @@ function HealthAI() {
             />
             <button
               className="min-h-12 rounded-xl bg-[#ffdd33] px-5 text-sm font-black text-black transition hover:bg-[#ffe866] active:scale-95 disabled:cursor-wait disabled:opacity-60"
-              disabled={isTyping || !message.trim()}
+              disabled={isAIThinking || !message.trim()}
               type="submit"
             >
               Send
