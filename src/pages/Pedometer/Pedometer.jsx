@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  DAILY_STEP_GOAL,
+  getInitialStepData,
+  getIstDateKey,
+  getPedometerMetrics,
+  saveStepData,
+} from '../../utils/pedometerData.js'
 
-const DAILY_GOAL = 8000
-const STEP_STORAGE_KEY = 'fitMindsPedometer'
 const STEP_THRESHOLD = 2.6
 const STEP_COOLDOWN_MS = 360
 const STOPPED_AFTER_MS = 1800
@@ -11,64 +16,6 @@ const supportLabels = [
   'Desktop fallback',
   'Permission required',
 ]
-
-function getIstDateKey(date = new Date()) {
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'Asia/Kolkata',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(date)
-}
-
-function getInitialStepData() {
-  const todayDate = getIstDateKey()
-  const fallback = {
-    todayDate,
-    todaySteps: 0,
-    yesterdaySteps: 0,
-    lastResetDate: todayDate,
-  }
-
-  try {
-    const saved = window.localStorage.getItem(STEP_STORAGE_KEY)
-
-    if (!saved) {
-      return fallback
-    }
-
-    const parsed = JSON.parse(saved)
-    const savedTodayDate = parsed.todayDate || todayDate
-    const savedTodaySteps = Number(parsed.todaySteps) || 0
-
-    if (savedTodayDate !== todayDate) {
-      return {
-        todayDate,
-        todaySteps: 0,
-        yesterdaySteps: savedTodaySteps,
-        lastResetDate: todayDate,
-      }
-    }
-
-    return {
-      todayDate,
-      todaySteps: savedTodaySteps,
-      yesterdaySteps: Number(parsed.yesterdaySteps) || 0,
-      lastResetDate: parsed.lastResetDate || todayDate,
-    }
-  } catch (error) {
-    console.error('Pedometer storage load failed:', error)
-    return fallback
-  }
-}
-
-function saveStepData(stepData) {
-  try {
-    window.localStorage.setItem(STEP_STORAGE_KEY, JSON.stringify(stepData))
-  } catch (error) {
-    console.error('Pedometer storage save failed:', error)
-  }
-}
 
 function formatNumber(value) {
   return new Intl.NumberFormat('en-IN').format(value)
@@ -121,10 +68,7 @@ function Pedometer() {
   const lastMovementAtRef = useRef(0)
 
   const todaySteps = stepData.todaySteps
-  const progress = Math.min(100, Math.round((todaySteps / DAILY_GOAL) * 100))
-  const distanceKm = (todaySteps * 0.00075).toFixed(2)
-  const calories = Math.round(todaySteps * 0.04)
-  const activeMinutes = Math.round(todaySteps / 100)
+  const { progress, distanceKm, calories, activeMinutes } = getPedometerMetrics(todaySteps)
 
   const trackingLabel = useMemo(() => {
     if (motionStatus === 'unsupported') {
@@ -330,7 +274,7 @@ function Pedometer() {
                   Daily Goal
                 </p>
                 <p className="mt-1 text-xl font-black text-[#12351f]">
-                  {formatNumber(DAILY_GOAL)} steps
+              {formatNumber(DAILY_STEP_GOAL)} steps
                 </p>
               </div>
               <p className="text-xl font-black text-[#12351f]">{progress}%</p>
