@@ -264,7 +264,7 @@ function DietReport() {
           Static Nutrition Recommendation
         </p>
         <h1 className="mt-3 text-3xl font-black text-white sm:text-4xl">
-          Diet Suggestion Report
+          Diet Report
         </h1>
         <p className="mt-3 max-w-3xl text-base font-semibold leading-7 text-white/72">
           Enter your current details to estimate calories, protein, hydration,

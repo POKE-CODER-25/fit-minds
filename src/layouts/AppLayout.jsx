@@ -3,18 +3,21 @@ import { useAuth } from '../hooks/useAuth.js'
 import { getAuthErrorMessage, logoutUser } from '../services/authService.js'
 
 const authenticatedLinks = [
-  { label: 'Home', to: '/home' },
+  { label: 'Home', to: '/home', end: true },
   { label: 'Workout', to: '/workout' },
-  { label: 'Diet', to: '/diet' },
-  { label: 'Pedometer', to: '/pedometer' },
-  { label: 'Health AI', to: '/health-ai' },
+  { label: 'Diet', to: '/diet', end: true },
+  { label: 'Diet Report', to: '/diet-report', end: true },
+  { label: 'Pedometer', to: '/pedometer', end: true },
+  { label: 'Health AI', to: '/health-ai', end: true },
 ]
 
 const mobileLinks = [
-  { label: 'Home', to: '/home' },
-  { label: 'Steps', to: '/pedometer' },
+  { label: 'Home', to: '/home', end: true },
   { label: 'Workout', to: '/workout' },
-  { label: 'Diet', to: '/diet' },
+  { label: 'Diet', to: '/diet', end: true },
+  { label: 'Diet Report', to: '/diet-report', end: true },
+  { label: 'Steps', to: '/pedometer', end: true },
+  { label: 'Health AI', to: '/health-ai', end: true },
 ]
 
 const guestLinks = [
@@ -41,16 +44,17 @@ function AppLayout() {
           <NavLink to="/" className="text-lg font-black text-[#75ff38]">
             Fit Minds
           </NavLink>
-          <div className="hidden gap-2 text-sm font-semibold text-white/75 md:flex">
+          <div className="hidden gap-2 text-sm font-semibold text-white/75 lg:flex">
             {links.map((link) => (
               <NavLink
                 className={({ isActive }) =>
-                  `shrink-0 rounded-full px-3 py-2 transition ${
+                  `shrink-0 rounded-full px-3 py-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffdd33] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050805] ${
                     isActive
                       ? 'bg-[#75ff38] text-black'
                       : 'bg-white/10 hover:bg-white/15'
                   }`
                 }
+                end={link.end}
                 key={link.to}
                 to={link.to}
               >
@@ -59,7 +63,7 @@ function AppLayout() {
             ))}
             {currentUser && (
               <button
-                className="shrink-0 rounded-full bg-[#ffdd33] px-3 py-2 font-black text-black transition hover:bg-[#ffe866]"
+                className="shrink-0 rounded-full bg-[#ffdd33] px-3 py-2 font-black text-black transition hover:bg-[#ffe866] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#75ff38] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050805]"
                 onClick={handleLogout}
                 type="button"
               >
@@ -68,10 +72,10 @@ function AppLayout() {
             )}
           </div>
 
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             {currentUser ? (
               <button
-                className="rounded-full bg-[#ffdd33] px-3 py-2 text-sm font-black text-black"
+                className="rounded-full bg-[#ffdd33] px-3 py-2 text-sm font-black text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#75ff38] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050805]"
                 onClick={handleLogout}
                 type="button"
               >
@@ -82,7 +86,7 @@ function AppLayout() {
                 {guestLinks.map((link) => (
                   <NavLink
                     className={({ isActive }) =>
-                      `rounded-full px-3 py-2 transition ${
+                      `rounded-full px-3 py-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffdd33] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050805] ${
                         isActive
                           ? 'bg-[#75ff38] text-black'
                           : 'bg-white/10 hover:bg-white/15'
@@ -100,26 +104,27 @@ function AppLayout() {
         </nav>
       </header>
 
-      <main className="flex-1 overflow-y-auto pb-24 md:pb-0">
+      <main className="flex-1 overflow-y-auto pb-24 lg:pb-0">
         <Outlet />
       </main>
 
-      <footer className="mb-16 border-t border-white/10 bg-black px-4 py-5 text-center text-sm text-white/60 md:mb-0 md:py-6">
+      <footer className="mb-16 border-t border-white/10 bg-black px-4 py-5 text-center text-sm text-white/60 lg:mb-0 lg:py-6">
         Fit Minds Prototype
       </footer>
 
       {currentUser && (
-        <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-black px-2 pb-3 pt-2 shadow-2xl shadow-black md:hidden">
-          <div className="mx-auto grid max-w-md grid-cols-4 gap-1">
+        <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-black px-1 pb-3 pt-2 shadow-2xl shadow-black lg:hidden">
+          <div className="mx-auto grid max-w-2xl grid-cols-6 gap-1">
             {mobileLinks.map((link) => (
               <NavLink
                 className={({ isActive }) =>
-                  `rounded-xl px-2 py-2 text-center text-xs font-black transition ${
+                  `flex min-h-12 items-center justify-center rounded-xl px-1 py-2 text-center text-xs font-black leading-tight transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#ffdd33] ${
                     isActive
                       ? 'bg-[#75ff38] text-black'
                       : 'text-white/70 hover:bg-white/10'
                   }`
                 }
+                end={link.end}
                 key={link.to}
                 to={link.to}
               >
