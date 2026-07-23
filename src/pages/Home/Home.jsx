@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import Button from '../../components/ui/Button.jsx'
 import { workoutDays } from '../../data/workoutDays.js'
 import {
   getInitialStepData,
@@ -40,10 +41,11 @@ const features = [
     cta: 'Open Workout Planner',
     to: '/workout',
     icon: icons.workout,
-    style: 'bg-[#12351f] text-white',
-    badgeStyle: 'bg-[#75ff38] text-black',
-    iconStyle: 'bg-[#75ff38] text-black',
-    linkStyle: 'text-[#75ff38]',
+    style:
+      'bg-gradient-to-br from-[var(--color-forest-light)] to-[var(--color-forest-dark)] text-[var(--color-text-primary)]',
+    badgeStyle: 'ui-badge--primary',
+    iconStyle: 'bg-[var(--color-primary)] text-[var(--color-text-dark)]',
+    linkStyle: 'text-[var(--color-primary)]',
   },
   {
     title: 'Diet Report',
@@ -53,10 +55,12 @@ const features = [
     cta: 'Create Diet Report',
     to: '/diet-report',
     icon: icons.diet,
-    style: 'bg-[#fff9d8] text-[#12351f]',
-    badgeStyle: 'bg-[#ffdd33] text-black',
-    iconStyle: 'bg-white text-[#12351f]',
-    linkStyle: 'text-[#12351f]',
+    style:
+      'border-[var(--color-border-light)] bg-[var(--color-surface-light)] text-[var(--color-text-dark)]',
+    badgeStyle: 'ui-badge--recommended',
+    iconStyle:
+      'bg-[var(--color-surface-mint)] text-[var(--color-forest)]',
+    linkStyle: 'text-[var(--color-forest)]',
   },
   {
     title: 'Pedometer',
@@ -66,10 +70,12 @@ const features = [
     cta: 'Open Pedometer',
     to: '/pedometer',
     icon: icons.steps,
-    style: 'bg-white text-[#12351f]',
-    badgeStyle: 'bg-[#eefbe8] text-green-800',
-    iconStyle: 'bg-[#12351f] text-white',
-    linkStyle: 'text-green-800',
+    style:
+      'bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)]',
+    badgeStyle: 'ui-badge--neutral',
+    iconStyle:
+      'bg-[var(--color-primary-soft)] text-[var(--color-primary)]',
+    linkStyle: 'text-[var(--color-primary)]',
   },
   {
     title: 'Health AI',
@@ -79,10 +85,12 @@ const features = [
     cta: 'Ask Health AI',
     to: '/health-ai',
     icon: icons.ai,
-    style: 'bg-gradient-to-br from-[#194a2c] to-[#07180d] text-white',
-    badgeStyle: 'bg-[#ffdd33] text-black',
-    iconStyle: 'bg-[#ffdd33] text-black',
-    linkStyle: 'text-[#ffdd33]',
+    style:
+      'bg-gradient-to-br from-[var(--color-bg-soft)] to-[var(--color-forest-dark)] text-[var(--color-text-primary)]',
+    badgeStyle: 'ui-badge--info',
+    iconStyle:
+      'bg-[var(--color-accent-soft)] text-[var(--color-accent)]',
+    linkStyle: 'text-[var(--color-primary)]',
   },
 ]
 
@@ -126,17 +134,6 @@ function Icon({ path, className = 'h-5 w-5' }) {
   )
 }
 
-function ActionLink({ children, className = '', to }) {
-  return (
-    <Link
-      className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-black transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffdd33] focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none ${className}`}
-      to={to}
-    >
-      {children}
-    </Link>
-  )
-}
-
 function Home() {
   const [stepData] = useState(getInitialStepData)
   const today = new Date()
@@ -157,6 +154,10 @@ function Home() {
       action: currentWorkout.rest ? 'View recovery day' : 'View today’s plan',
       to: '/workout',
       icon: icons.workout,
+      tileStyle:
+        'bg-[var(--color-forest)] text-[var(--color-text-primary)]',
+      iconStyle:
+        'bg-[var(--color-primary)] text-[var(--color-text-dark)]',
     },
     {
       label: "Today's Steps",
@@ -164,6 +165,10 @@ function Home() {
       action: pedometer.steps ? 'Open step tracker' : 'Start walking',
       to: '/pedometer',
       icon: icons.steps,
+      tileStyle:
+        'bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)]',
+      iconStyle:
+        'bg-[var(--color-primary-soft)] text-[var(--color-primary)]',
     },
     {
       label: 'Nutrition Status',
@@ -171,6 +176,11 @@ function Home() {
       action: 'Create report',
       to: '/diet-report',
       icon: icons.diet,
+      tileStyle:
+        'border-[var(--color-border-light)] bg-[var(--color-surface-mint)] text-[var(--color-text-dark)]',
+      iconStyle:
+        'bg-[var(--color-forest)] text-[var(--color-surface-light)]',
+      light: true,
     },
     {
       label: 'Body Check',
@@ -178,67 +188,72 @@ function Home() {
       action: 'Calculate BMI',
       to: '/health-ai',
       icon: icons.body,
+      tileStyle:
+        'bg-[var(--color-bg-soft)] text-[var(--color-text-primary)]',
+      iconStyle:
+        'bg-[var(--color-accent-soft)] text-[var(--color-accent)]',
     },
   ]
 
   return (
-    <div className="mx-auto w-full max-w-[1400px] overflow-x-clip px-3 pb-28 pt-10 sm:px-6 sm:pb-32 sm:pt-14 lg:px-12 lg:pb-20 lg:pt-16 xl:px-16">
-      <header className="relative isolate flex min-h-[420px] overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#12351f] via-[#0d2b19] to-[#07150c] px-5 py-12 shadow-2xl shadow-black/30 sm:min-h-[460px] sm:px-10 sm:py-16 lg:min-h-[500px] lg:px-14 lg:py-20">
+    <div className="app-container page-shell overflow-x-clip">
+      <header className="relative isolate flex min-h-[440px] overflow-hidden rounded-[var(--radius-xl)] bg-gradient-to-br from-[var(--color-forest-light)] via-[var(--color-forest)] to-[var(--color-forest-dark)] px-5 py-10 shadow-[var(--shadow-floating)] sm:min-h-[500px] sm:px-10 sm:py-14 lg:px-14 lg:py-16">
         <div
           aria-hidden="true"
-          className="absolute -left-28 bottom-[-10rem] h-80 w-80 rounded-full bg-[#75ff38]/10 blur-3xl"
+          className="absolute -left-28 bottom-[-10rem] h-80 w-80 rounded-full bg-[var(--color-primary-soft)] blur-3xl"
         />
         <div
           aria-hidden="true"
-          className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[#75ff38]/10 blur-3xl"
+          className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[var(--color-primary-soft)] blur-3xl"
         />
 
         <div className="relative grid w-full items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-[#75ff38]">
+            <p className="type-label font-extrabold text-[var(--color-primary)]">
               Welcome back <span className="mx-2 text-white/30">/</span>{' '}
               {formattedDate}
             </p>
-            <h1 className="mt-6 max-w-3xl text-[2.65rem] font-black leading-[0.98] tracking-[-0.045em] text-white sm:text-6xl lg:text-7xl">
+            <h1 className="type-display mt-6 max-w-3xl text-[var(--color-text-primary)]">
               Build better habits.
-              <span className="mt-2 block text-[#75ff38]">
+              <span className="mt-2 block text-[var(--color-primary)]">
                 Train with purpose.
               </span>
             </h1>
-            <p className="mt-8 max-w-xl text-sm font-semibold leading-6 text-white/60 sm:text-base sm:leading-7">
+            <p className="type-body-large mt-7 max-w-xl text-[var(--color-text-secondary)]">
               Your workout, nutrition, daily movement, and fitness guidance—all
               focused on what you can do today.
             </p>
-            <div className="mt-10 flex flex-col gap-3 min-[380px]:flex-row">
-              <ActionLink
-                className="bg-[#75ff38] text-black hover:bg-[#8dff5f]"
+            <div className="mt-9 flex flex-col gap-3 min-[380px]:flex-row">
+              <Button
+                size="large"
                 to="/workout"
               >
                 Start Today&apos;s Workout
                 <Icon className="h-4 w-4" path={icons.arrow} />
-              </ActionLink>
-              <ActionLink
-                className="border border-white/20 bg-white/5 text-white hover:bg-white/10"
+              </Button>
+              <Button
+                size="large"
                 to="/health-ai"
+                variant="secondary"
               >
                 Ask Health AI
-              </ActionLink>
+              </Button>
             </div>
           </div>
 
           <div
             aria-hidden="true"
-            className="relative hidden min-h-[360px] items-center justify-center lg:flex"
+            className="relative flex min-h-[230px] items-center justify-center sm:min-h-[280px] lg:min-h-[360px]"
           >
-            <div className="absolute h-80 w-80 rounded-full border border-white/10" />
-            <div className="absolute h-64 w-64 rounded-full border-[18px] border-[#75ff38]/15 border-r-[#75ff38]" />
-            <div className="absolute h-48 w-48 rotate-45 rounded-[3rem] border border-white/10 bg-white/[0.035]" />
-            <div className="absolute left-10 top-8 h-3 w-3 rounded-full bg-[#ffdd33] shadow-[0_0_28px_8px_rgba(255,221,51,0.35)]" />
-            <div className="absolute bottom-14 right-6 h-4 w-4 rounded-full bg-[#75ff38] shadow-[0_0_32px_10px_rgba(117,255,56,0.3)]" />
-            <div className="relative flex h-32 w-32 rotate-6 items-center justify-center rounded-[2.5rem] bg-[#75ff38] text-black shadow-[0_24px_70px_rgba(0,0,0,0.45)]">
-              <Icon className="h-16 w-16 -rotate-6" path={icons.workout} />
+            <div className="absolute h-56 w-56 rounded-full border border-white/10 sm:h-72 sm:w-72 lg:h-80 lg:w-80" />
+            <div className="absolute h-44 w-44 rounded-full border-[14px] border-[var(--color-primary-soft)] border-r-[var(--color-primary)] sm:h-56 sm:w-56 lg:h-64 lg:w-64 lg:border-[18px]" />
+            <div className="absolute h-32 w-32 rotate-45 rounded-[2rem] border border-white/10 bg-white/[0.035] sm:h-44 sm:w-44 sm:rounded-[3rem] lg:h-48 lg:w-48" />
+            <div className="absolute left-[12%] top-[12%] h-2.5 w-2.5 rounded-full bg-[var(--color-accent)] shadow-[var(--glow-accent)] sm:h-3 sm:w-3" />
+            <div className="absolute bottom-[16%] right-[10%] h-3 w-3 rounded-full bg-[var(--color-primary)] shadow-[var(--glow-primary)] sm:h-4 sm:w-4" />
+            <div className="relative flex h-24 w-24 rotate-6 items-center justify-center rounded-[2rem] bg-[var(--color-primary)] text-[var(--color-text-dark)] shadow-[var(--shadow-floating)] sm:h-28 sm:w-28 lg:h-32 lg:w-32 lg:rounded-[2.5rem]">
+              <Icon className="h-12 w-12 -rotate-6 sm:h-14 sm:w-14 lg:h-16 lg:w-16" path={icons.workout} />
             </div>
-            <span className="absolute bottom-5 left-8 rounded-full border border-white/10 bg-black/40 px-5 py-3 text-xs font-black uppercase tracking-wider text-white backdrop-blur">
+            <span className="absolute bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-[var(--radius-md)] border border-[var(--color-border)] bg-black/45 px-4 py-2 text-xs font-extrabold text-white backdrop-blur sm:bottom-2 sm:px-5 sm:py-3">
               Today · {currentWorkout.rest ? 'Recover' : currentWorkout.split}
             </span>
           </div>
@@ -247,38 +262,55 @@ function Home() {
 
       <section
         aria-labelledby="today-glance"
-        className="mt-14 sm:mt-16"
+        className="section-shell"
       >
-        <div>
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#75ff38]">
+        <div className="max-w-2xl">
+          <p className="type-eyebrow text-[var(--color-primary)]">
             Daily focus
           </p>
           <h2
-            className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl"
+            className="type-section-title mt-3 text-[var(--color-text-primary)]"
             id="today-glance"
           >
             Today at a glance
           </h2>
+          <p className="type-body mt-3 text-[var(--color-text-secondary)]">
+            Your workout, movement, and next health actions in one quick view.
+          </p>
         </div>
 
-        <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4">
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {dailyItems.map((item) => (
             <Link
-              className="group flex min-h-52 min-w-0 flex-col justify-between rounded-[1.5rem] border border-white/10 bg-[#0d1811] p-5 text-white shadow-lg shadow-black/10 transition duration-300 hover:-translate-y-1 hover:border-[#75ff38]/50 hover:bg-[#102016] hover:shadow-[0_18px_50px_rgba(0,0,0,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#75ff38] motion-reduce:transform-none motion-reduce:transition-none sm:p-6"
+              className={`group flex min-h-48 min-w-0 flex-col justify-between rounded-[var(--radius-lg)] border border-[var(--color-border)] p-5 shadow-[var(--shadow-surface)] transition duration-[var(--duration-standard)] ease-[var(--ease-out)] hover:-translate-y-[3px] hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] motion-reduce:transform-none motion-reduce:transition-none sm:p-6 ${item.tileStyle}`}
               key={item.label}
               to={item.to}
             >
-              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#75ff38] text-black transition duration-300 group-hover:rotate-3 group-hover:scale-105 motion-reduce:transform-none">
+              <span
+                className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-[var(--radius-md)] transition duration-[var(--duration-standard)] group-hover:scale-105 motion-reduce:transform-none ${item.iconStyle}`}
+              >
                 <Icon className="h-7 w-7" path={item.icon} />
               </span>
-              <span className="mt-7 min-w-0">
-                <span className="block text-xs font-black uppercase tracking-[0.14em] text-white/40">
+              <span className="mt-6 min-w-0">
+                <span
+                  className={`type-label block ${
+                    item.light
+                      ? 'text-[var(--color-forest)]/65'
+                      : 'text-[var(--color-text-muted)]'
+                  }`}
+                >
                   {item.label}
                 </span>
                 <span className="mt-2 block break-words text-xl font-black leading-tight">
                   {item.value}
                 </span>
-                <span className="mt-3 inline-flex items-center gap-2 text-xs font-black text-[#75ff38]">
+                <span
+                  className={`mt-3 inline-flex items-center gap-2 text-xs font-extrabold ${
+                    item.light
+                      ? 'text-[var(--color-forest)]'
+                      : 'text-[var(--color-primary)]'
+                  }`}
+                >
                   {item.action}{' '}
                   <Icon className="h-3.5 w-3.5" path={icons.arrow} />
                 </span>
@@ -288,48 +320,54 @@ function Home() {
         </div>
       </section>
 
-      <section aria-labelledby="core-features" className="mt-16 sm:mt-20">
+      <section aria-labelledby="core-features" className="section-shell">
         <div className="max-w-2xl">
-          <p className="text-xs font-black uppercase tracking-[0.16em] text-[#75ff38]">
+          <p className="type-eyebrow text-[var(--color-primary)]">
             Your fitness toolkit
           </p>
           <h2
-            className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl"
+            className="type-section-title mt-3 text-[var(--color-text-primary)]"
             id="core-features"
           >
             Four ways to move forward
           </h2>
-          <p className="mt-2 text-sm font-semibold leading-6 text-white/55">
+          <p className="type-body mt-3 text-[var(--color-text-secondary)]">
             Choose the part of your routine that needs attention today.
           </p>
         </div>
 
-        <div className="mt-8 grid gap-5 md:grid-cols-2">
+        <div className="mt-9 grid gap-5 md:grid-cols-2 lg:gap-6">
           {features.map((feature) => (
             <Link
-              className={`group relative flex min-h-[340px] flex-col overflow-hidden rounded-[2rem] border border-transparent p-6 shadow-xl shadow-black/15 transition duration-300 hover:-translate-y-1.5 hover:border-[#75ff38]/60 hover:shadow-[0_24px_70px_rgba(0,0,0,0.32)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#75ff38] motion-reduce:transform-none motion-reduce:transition-none sm:min-h-[380px] sm:p-8 ${feature.style}`}
+              className={`group relative flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-border)] p-6 shadow-[var(--shadow-surface)] transition duration-[var(--duration-standard)] ease-[var(--ease-out)] hover:-translate-y-[3px] hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] motion-reduce:transform-none motion-reduce:transition-none sm:min-h-[380px] sm:p-8 ${feature.style}`}
               key={feature.title}
               to={feature.to}
             >
               <div
                 aria-hidden="true"
-                className="absolute -bottom-20 -right-16 h-64 w-64 rounded-full border-[2.5rem] border-current opacity-[0.06] transition duration-500 group-hover:scale-110 motion-reduce:transform-none"
+                className="absolute -bottom-20 -right-16 h-64 w-64 rounded-full border-[2.5rem] border-current opacity-[0.06] transition duration-[var(--duration-slow)] group-hover:scale-105 motion-reduce:transform-none"
+              />
+              <Icon
+                className="absolute right-7 top-24 h-28 w-28 opacity-[0.045] sm:h-36 sm:w-36"
+                path={feature.icon}
               />
               <div className="relative flex items-start justify-between gap-4">
                 <span
-                  className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-[1.35rem] transition duration-300 group-hover:rotate-3 group-hover:scale-105 motion-reduce:transform-none ${feature.iconStyle}`}
+                  className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-[var(--radius-lg)] transition duration-[var(--duration-standard)] group-hover:scale-105 motion-reduce:transform-none ${feature.iconStyle}`}
                 >
                   <Icon className="h-8 w-8" path={feature.icon} />
                 </span>
                 <span
-                  className={`rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] ${feature.badgeStyle}`}
+                  className={`ui-badge ${feature.badgeStyle}`}
                 >
                   {feature.badge}
                 </span>
               </div>
               <div className="relative mt-auto max-w-md pt-12">
-                <h3 className="text-3xl font-black">{feature.title}</h3>
-                <p className="mt-3 text-sm font-semibold leading-6 opacity-65">
+                <h3 className="text-3xl font-black tracking-tight">
+                  {feature.title}
+                </h3>
+                <p className="type-body-small mt-3 max-w-sm opacity-65">
                   {feature.description}
                 </p>
                 <span
@@ -346,32 +384,33 @@ function Home() {
 
       <section
         aria-labelledby="weekly-routine"
-        className="mt-16 border-y border-white/10 py-14 sm:mt-20 sm:py-16"
+        className="section-shell border-y border-[var(--color-border)] py-12 sm:py-16"
       >
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-[#ffdd33]">
+            <p className="type-eyebrow text-[var(--color-primary)]">
               Your training week
             </p>
             <h2
-              className="mt-2 text-3xl font-black text-white sm:text-4xl"
+              className="type-section-title mt-3 text-[var(--color-text-primary)]"
               id="weekly-routine"
             >
               Weekly routine
             </h2>
           </div>
-          <ActionLink
-            className="w-fit border border-white/15 bg-white/5 text-white hover:bg-white/10"
+          <Button
+            className="w-fit"
             to="/workout"
+            variant="secondary"
           >
             View Full Workout Plan
-          </ActionLink>
+          </Button>
         </div>
 
-        <div className="relative mt-10 grid grid-cols-2 gap-x-3 gap-y-7 sm:grid-cols-4 lg:grid-cols-7 lg:gap-4">
+        <div className="relative mt-10 grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-4 lg:grid-cols-7 lg:gap-4">
           <div
             aria-hidden="true"
-            className="absolute left-[7%] right-[7%] top-7 hidden h-px bg-gradient-to-r from-transparent via-white/20 to-transparent lg:block"
+            className="absolute left-[7%] right-[7%] top-7 hidden h-px bg-gradient-to-r from-transparent via-[var(--color-border-strong)] to-transparent lg:block"
           />
           {workoutDays.map((day, index) => {
             const isToday = index === mondayIndex
@@ -381,26 +420,26 @@ function Home() {
                 aria-current={isToday ? 'date' : undefined}
                 className={`relative min-w-0 px-2 py-1 text-center ${
                   isToday
-                    ? 'text-white lg:-translate-y-2'
+                    ? 'text-[var(--color-text-primary)]'
                     : day.rest
-                      ? 'text-[#ffdd33]'
-                      : 'text-white'
+                      ? 'text-[var(--color-accent)]'
+                      : 'text-[var(--color-text-primary)]'
                 }`}
                 key={day.day}
               >
                 <span
-                  className={`relative z-10 mx-auto flex items-center justify-center rounded-full border-4 border-[#050805] font-black ${
+                  className={`relative z-10 mx-auto flex items-center justify-center rounded-full border-4 border-[var(--color-bg)] font-black ${
                     isToday
-                      ? 'h-16 w-16 bg-[#75ff38] text-lg text-black shadow-[0_0_35px_rgba(117,255,56,0.3)]'
+                      ? 'h-16 w-16 bg-[var(--color-primary)] text-lg text-[var(--color-text-dark)] shadow-[var(--glow-primary)]'
                       : day.rest
-                        ? 'h-14 w-14 bg-[#ffdd33]/15 text-[#ffdd33]'
-                        : 'h-14 w-14 bg-[#14261a] text-white/65'
+                        ? 'h-14 w-14 bg-[var(--color-accent-soft)] text-[var(--color-accent)]'
+                        : 'h-14 w-14 bg-[var(--color-bg-soft)] text-[var(--color-text-secondary)]'
                   }`}
                 >
                   {index + 1}
                 </span>
                 <p
-                  className="mt-4 text-[10px] font-black uppercase tracking-[0.14em] text-current opacity-50"
+                  className="type-caption mt-4 font-extrabold text-current opacity-55"
                 >
                   {weekLabels[index]}
                 </p>
@@ -408,7 +447,7 @@ function Home() {
                   {day.rest ? 'Rest' : day.split}
                 </p>
                 {isToday && (
-                  <span className="mt-2 inline-block text-[9px] font-black uppercase tracking-[0.18em] text-[#75ff38]">
+                  <span className="ui-badge ui-badge--primary mt-2">
                     Today
                   </span>
                 )}
@@ -420,30 +459,30 @@ function Home() {
 
       <section
         aria-labelledby="why-fit-minds"
-        className="mt-16 sm:mt-20"
+        className="section-shell"
       >
         <div className="max-w-xl">
-          <p className="text-xs font-black uppercase tracking-[0.16em] text-[#75ff38]">
+          <p className="type-eyebrow text-[var(--color-primary)]">
             Why Fit Minds
           </p>
           <h2
-            className="mt-2 text-3xl font-black text-white sm:text-4xl"
+            className="type-section-title mt-3 text-[var(--color-text-primary)]"
             id="why-fit-minds"
           >
             Less guesswork. More direction.
           </h2>
         </div>
-        <div className="mt-8 grid gap-7 border-y border-white/10 py-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+        <div className="mt-9 grid gap-8 border-y border-[var(--color-border)] py-9 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
           {benefits.map((benefit) => (
             <article className="flex gap-4" key={benefit.title}>
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#75ff38]/10 text-[#75ff38]">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-primary-soft)] text-[var(--color-primary)]">
                 <Icon className="h-6 w-6" path={benefit.icon} />
               </span>
               <div>
-                <h3 className="text-sm font-black text-white">
+                <h3 className="type-card-title text-[var(--color-text-primary)]">
                   {benefit.title}
                 </h3>
-                <p className="mt-1 text-xs font-semibold leading-5 text-white/45">
+                <p className="type-body-small mt-2 text-[var(--color-text-secondary)]">
                   {benefit.description}
                 </p>
               </div>
@@ -452,13 +491,15 @@ function Home() {
         </div>
       </section>
 
-      <aside className="mx-auto mt-12 flex max-w-4xl items-start justify-center gap-3 text-white/55 sm:mt-16">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#ffdd33] text-black">
+      <aside className="mx-auto mt-12 flex max-w-4xl items-start gap-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-5 text-[var(--color-text-secondary)] shadow-[var(--shadow-surface)] sm:mt-16 sm:p-6">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-accent-soft)] text-[var(--color-accent)]">
           <Icon path={icons.shield} />
         </span>
         <div>
-          <p className="text-sm font-black text-white">Wellness note</p>
-          <p className="mt-1 text-xs font-semibold leading-5 sm:text-sm">
+          <p className="type-label text-[var(--color-text-primary)]">
+            Wellness note
+          </p>
+          <p className="type-body-small mt-1">
             Fit Minds provides general fitness and wellness guidance. For
             medical concerns, consult a qualified healthcare professional.
           </p>
