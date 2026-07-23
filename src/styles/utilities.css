@@ -139,7 +139,7 @@
   line-height: 1.45;
 }
 
-@media (min-width: 64rem) {
+@media (min-width: 80rem) {
   .mobile-nav-safe {
     padding-block-end: var(--page-padding-block);
   }

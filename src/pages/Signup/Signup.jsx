@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import FormField from '../../components/FormField.jsx'
+import Button from '../../components/ui/Button.jsx'
 import {
   getAuthErrorMessage,
   signupWithEmail,
@@ -35,12 +36,12 @@ function Signup() {
   }
 
   return (
-    <section className="mx-auto flex w-full max-w-5xl items-center justify-center px-4 py-10 sm:px-6 lg:px-8">
-      <div className="w-full max-w-xl rounded-3xl bg-white p-6 text-black shadow-xl shadow-black/20 sm:p-8">
-        <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#75ff38]">
+    <section className="app-container-narrow page-shell flex items-center justify-center">
+      <div className="ui-card w-full max-w-xl p-6 sm:p-8">
+        <p className="type-eyebrow text-[var(--color-primary)]">
           Prototype Version
         </p>
-        <h1 className="mt-3 text-3xl font-black text-[#12351f]">Signup</h1>
+        <h1 className="type-page-title mt-3">Signup</h1>
 
         <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
           <FormField
@@ -62,24 +63,30 @@ function Signup() {
           />
 
           {error && (
-            <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
+            <p
+              aria-live="polite"
+              className="rounded-[var(--radius-md)] border border-red-400/25 bg-red-400/10 px-4 py-3 text-sm font-bold text-red-300"
+              role="alert"
+            >
               {error}
             </p>
           )}
 
-          <button
-            className="w-full rounded-2xl bg-[#75ff38] px-6 py-3 font-black text-black shadow-lg shadow-[#75ff38]/20 disabled:cursor-not-allowed disabled:opacity-60"
+          <Button
             disabled={loading}
+            fullWidth
+            loading={loading}
+            size="large"
             type="submit"
           >
             {loading ? 'Creating account...' : 'Create Account'}
-          </button>
+          </Button>
         </form>
 
-        <p className="mt-5 text-center text-sm font-bold text-[#12351f]">
+        <p className="mt-5 text-center text-sm font-bold text-[var(--color-text-secondary)]">
           Already have an account?{' '}
           <Link
-            className="underline decoration-[#75ff38] decoration-2 underline-offset-4"
+            className="rounded-[var(--radius-sm)] text-[var(--color-primary)] underline decoration-2 underline-offset-4"
             to="/login"
           >
             Login

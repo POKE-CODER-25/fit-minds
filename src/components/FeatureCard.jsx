@@ -3,21 +3,21 @@ import { Link } from 'react-router-dom'
 function FeatureCard({ description, title, to }) {
   return (
     <Link
-      className="group flex min-h-48 flex-col justify-between rounded-2xl bg-[#12351f] p-5 shadow-xl shadow-black/25 transition hover:-translate-y-0.5 hover:bg-[#174629]"
+      className="ui-card ui-card--feature ui-card--interactive group flex flex-col justify-between"
       to={to}
     >
       <div>
         <div className="flex items-start justify-between gap-3">
-          <h2 className="text-xl font-black text-white">{title}</h2>
-          <span className="shrink-0 rounded-full bg-[#ffdd33] px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-black">
+          <h2 className="type-card-title text-white">{title}</h2>
+          <span className="ui-badge ui-badge--neutral shrink-0">
             Prototype
           </span>
         </div>
-        <p className="mt-4 text-sm font-semibold leading-6 text-white/72">
+        <p className="type-body-small mt-4 text-[var(--color-text-secondary)]">
           {description}
         </p>
       </div>
-      <p className="mt-6 text-sm font-black uppercase tracking-[0.16em] text-[#75ff38] transition group-hover:text-[#ffdd33]">
+      <p className="type-label mt-6 text-[var(--color-primary)] transition group-hover:text-white">
         Open
       </p>
     </Link>

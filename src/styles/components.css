@@ -341,9 +341,194 @@ textarea.ui-control {
   background: var(--color-bg-soft);
 }
 
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  border-bottom: 1px solid var(--color-border);
+  background: rgb(3 8 6 / 0.92);
+  backdrop-filter: blur(18px);
+}
+
+.app-brand {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-text-primary);
+  font-size: 1.125rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.app-brand__mark {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  color: var(--color-text-dark);
+  background: var(--color-primary);
+}
+
+.desktop-nav-link {
+  position: relative;
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  padding-inline: var(--space-3);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-body-small);
+  font-weight: 700;
+  white-space: nowrap;
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.desktop-nav-link::after {
+  position: absolute;
+  right: var(--space-3);
+  bottom: 0.25rem;
+  left: var(--space-3);
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  content: '';
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.desktop-nav-link:hover {
+  color: var(--color-text-primary);
+  background: rgb(255 255 255 / 0.035);
+}
+
+.desktop-nav-link[aria-current='page'] {
+  color: var(--color-primary);
+}
+
+.desktop-nav-link[aria-current='page']::after {
+  background: var(--color-primary);
+}
+
+.mobile-app-nav {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 30;
+  padding: var(--space-2) var(--space-1)
+    max(var(--space-2), env(safe-area-inset-bottom));
+  border-top: 1px solid var(--color-border);
+  background: rgb(12 18 15 / 0.96);
+  box-shadow: 0 -12px 32px rgb(0 0 0 / 0.24);
+  backdrop-filter: blur(18px);
+}
+
+.mobile-nav-link {
+  display: flex;
+  min-width: 0;
+  min-height: 3.75rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  font-size: 0.6875rem;
+  font-weight: 750;
+  line-height: 1;
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.mobile-nav-link:hover {
+  color: var(--color-text-primary);
+  background: rgb(255 255 255 / 0.04);
+}
+
+.mobile-nav-link[aria-current='page'] {
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.ui-state {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  padding: var(--card-padding);
+  text-align: center;
+}
+
+.ui-state__icon {
+  display: inline-flex;
+  width: 3rem;
+  height: 3rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.ui-state--error .ui-state__icon {
+  color: var(--color-danger);
+  background: rgb(248 113 113 / 0.12);
+}
+
+.ui-state__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.ui-spinner {
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: ui-spin 700ms linear infinite;
+}
+
+.ui-skeleton {
+  min-height: 1rem;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-soft),
+    rgb(255 255 255 / 0.08),
+    var(--color-bg-soft)
+  );
+  background-size: 200% 100%;
+  animation: ui-skeleton 1.4s ease-in-out infinite;
+}
+
+@keyframes ui-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ui-skeleton {
+  to {
+    background-position: -200% 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ui-button:hover:not(:disabled),
   .ui-card--interactive:hover {
     transform: none;
+  }
+
+  .ui-spinner,
+  .ui-skeleton {
+    animation: none;
   }
 }

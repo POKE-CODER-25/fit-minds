@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import FormField from '../../components/FormField.jsx'
+import Button from '../../components/ui/Button.jsx'
 import {
   getAuthErrorMessage,
   loginWithEmail,
@@ -88,12 +89,12 @@ function Login() {
   }
 
   return (
-    <section className="mx-auto flex w-full max-w-5xl items-center justify-center px-4 py-10 sm:px-6 lg:px-8">
-      <div className="w-full max-w-xl rounded-3xl bg-white p-6 text-black shadow-xl shadow-black/20 sm:p-8">
-        <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#75ff38]">
+    <section className="app-container-narrow page-shell flex items-center justify-center">
+      <div className="ui-card w-full max-w-xl p-6 sm:p-8">
+        <p className="type-eyebrow text-[var(--color-primary)]">
           Prototype Version
         </p>
-        <h1 className="mt-3 text-3xl font-black text-[#12351f]">Login</h1>
+        <h1 className="type-page-title mt-3">Login</h1>
 
         <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
           <FormField
@@ -114,36 +115,47 @@ function Login() {
           />
 
           {error && (
-            <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
+            <p
+              aria-live="polite"
+              className="rounded-[var(--radius-md)] border border-red-400/25 bg-red-400/10 px-4 py-3 text-sm font-bold text-red-300"
+              role="alert"
+            >
               {error}
             </p>
           )}
           {message && (
-            <p className="rounded-2xl bg-[#f7fff2] px-4 py-3 text-sm font-bold text-[#12351f]">
+            <p
+              aria-live="polite"
+              className="rounded-[var(--radius-md)] border border-green-400/25 bg-green-400/10 px-4 py-3 text-sm font-bold text-green-300"
+              role="status"
+            >
               {message}
             </p>
           )}
 
-          <button
-            className="w-full rounded-2xl bg-[#75ff38] px-6 py-3 font-black text-black shadow-lg shadow-[#75ff38]/20 disabled:cursor-not-allowed disabled:opacity-60"
+          <Button
             disabled={loading || resetLoading}
+            fullWidth
+            loading={loading}
+            size="large"
             type="submit"
           >
             {loading ? 'Please wait...' : 'Login'}
-          </button>
+          </Button>
         </form>
 
-        <div className="mt-5 flex flex-col gap-3 text-center text-sm font-bold text-[#12351f] sm:flex-row sm:items-center sm:justify-between">
-          <button
-            className="text-left underline decoration-[#75ff38] decoration-2 underline-offset-4 disabled:opacity-60 sm:text-center"
+        <div className="mt-5 flex flex-col gap-3 text-center text-sm font-bold text-[var(--color-text-secondary)] sm:flex-row sm:items-center sm:justify-between">
+          <Button
+            className="justify-start px-0 sm:justify-center"
             disabled={loading || resetLoading}
+            loading={resetLoading}
             onClick={handleResetPassword}
-            type="button"
+            variant="ghost"
           >
             {resetLoading ? 'Sending reset email...' : 'Forgot Password?'}
-          </button>
+          </Button>
           <Link
-            className="underline decoration-[#75ff38] decoration-2 underline-offset-4"
+            className="min-h-11 content-center rounded-[var(--radius-sm)] text-[var(--color-primary)] underline decoration-2 underline-offset-4"
             to="/signup"
           >
             Create account
