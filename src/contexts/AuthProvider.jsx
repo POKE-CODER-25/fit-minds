@@ -2,56 +2,15 @@ import { useEffect, useMemo, useState } from 'react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { AuthContext } from './AuthContext.js'
 import { auth } from '../firebase/firebaseConfig.js'
-import { getFitnessProfile } from '../services/firestoreService.js'
 
 function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null)
-  const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [profileLoading, setProfileLoading] = useState(false)
-
-  async function refreshProfile(uid = currentUser?.uid) {
-    if (!uid) {
-      setProfile(null)
-      return null
-    }
-
-    setProfileLoading(true)
-    try {
-      const latestProfile = await getFitnessProfile(uid)
-      setProfile(latestProfile)
-      return latestProfile
-    } catch (error) {
-      console.error('PROFILE LOAD FAILED:', error)
-      console.error('code:', error?.code)
-      console.error('message:', error?.message)
-      setProfile(null)
-      return null
-    } finally {
-      setProfileLoading(false)
-    }
-  }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user)
-
-      if (!user) {
-        setProfile(null)
-        setLoading(false)
-        return
-      }
-
       setLoading(false)
-      try {
-        const existingProfile = await getFitnessProfile(user.uid)
-        setProfile(existingProfile)
-      } catch (error) {
-        console.error('PROFILE LOAD FAILED:', error)
-        console.error('code:', error?.code)
-        console.error('message:', error?.message)
-        setProfile(null)
-      }
     })
 
     return unsubscribe
@@ -61,11 +20,8 @@ function AuthProvider({ children }) {
     () => ({
       currentUser,
       loading,
-      profile,
-      profileLoading,
-      refreshProfile,
     }),
-    [currentUser, loading, profile, profileLoading],
+    [currentUser, loading],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

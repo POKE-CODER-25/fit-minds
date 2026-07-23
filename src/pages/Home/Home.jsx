@@ -11,7 +11,6 @@ const quickActions = [
   { label: 'Create Diet Report', to: '/diet-report', icon: 'M7 3h10v4H7zM5 7h14v14H5zM8 12h8m-8 4h5' },
   { label: 'Open Pedometer', to: '/pedometer', icon: 'M13 5.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM9.5 21l2-6 2 2v4m-6-9 3-4 3 2 3 1' },
   { label: 'Ask Health AI', to: '/health-ai', icon: 'M12 3v3m0 12v3M3 12h3m12 0h3M8 8l-2-2m10 2 2-2m-2 10 2 2m-10-2-2 2M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z' },
-  { label: 'Update Profile', to: '/profile', icon: 'M20 21a8 8 0 0 0-16 0m8-10a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z' },
 ]
 
 const aiPrompts = ["Plan today's workout", 'What should I eat today?', 'How should I recover?']

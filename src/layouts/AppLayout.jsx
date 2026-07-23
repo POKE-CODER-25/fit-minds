@@ -8,7 +8,6 @@ const authenticatedLinks = [
   { label: 'Diet', to: '/diet' },
   { label: 'Pedometer', to: '/pedometer' },
   { label: 'Health AI', to: '/health-ai' },
-  { label: 'Profile', to: '/profile' },
 ]
 
 const mobileLinks = [
@@ -16,7 +15,6 @@ const mobileLinks = [
   { label: 'Steps', to: '/pedometer' },
   { label: 'Workout', to: '/workout' },
   { label: 'Diet', to: '/diet' },
-  { label: 'Profile', to: '/profile' },
 ]
 
 const guestLinks = [
@@ -72,27 +70,13 @@ function AppLayout() {
 
           <div className="flex items-center gap-2 md:hidden">
             {currentUser ? (
-              <>
-                <NavLink
-                  className={({ isActive }) =>
-                    `rounded-full px-3 py-2 text-sm font-black transition ${
-                      isActive
-                        ? 'bg-[#75ff38] text-black'
-                        : 'bg-white/10 text-white/80'
-                    }`
-                  }
-                  to="/profile"
-                >
-                  Profile
-                </NavLink>
-                <button
-                  className="rounded-full bg-[#ffdd33] px-3 py-2 text-sm font-black text-black"
-                  onClick={handleLogout}
-                  type="button"
-                >
-                  Logout
-                </button>
-              </>
+              <button
+                className="rounded-full bg-[#ffdd33] px-3 py-2 text-sm font-black text-black"
+                onClick={handleLogout}
+                type="button"
+              >
+                Logout
+              </button>
             ) : (
               <div className="flex gap-2 text-sm font-semibold text-white/75">
                 {guestLinks.map((link) => (
@@ -126,7 +110,7 @@ function AppLayout() {
 
       {currentUser && (
         <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-black px-2 pb-3 pt-2 shadow-2xl shadow-black md:hidden">
-          <div className="mx-auto grid max-w-md grid-cols-5 gap-1">
+          <div className="mx-auto grid max-w-md grid-cols-4 gap-1">
             {mobileLinks.map((link) => (
               <NavLink
                 className={({ isActive }) =>
